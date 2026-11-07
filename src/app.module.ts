@@ -3,6 +3,8 @@ import { createObserveModule } from '@nestjs/observe';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { CatsModule } from './cats/cats.module.js';
+import { DogsModule } from './dogs/dogs.module.js';
+import { ParrotsModule } from './parrots/parrots.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -16,7 +18,9 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       appSecret: process.env.OBSERVE_APP_SECRET ?? 'YOUR_APP_SECRET',
       serviceId: 'nest-app',
     }),
-    CatsModule
+    CatsModule,
+    DogsModule,
+    ParrotsModule
   ],
   controllers: [AppController],
   providers: [AppService],
