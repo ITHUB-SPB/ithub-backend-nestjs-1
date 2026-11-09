@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import * as z from 'zod';
 import { CatsService } from './cats.service.js';
@@ -9,7 +9,7 @@ const createCatSchema = z.object({
 
 @Controller('cats')
 export class CatsController {
-  constructor(private readonly catsService: CatsService) {}
+  constructor(private readonly catsService: CatsService) { }
 
   @ApiQuery({
     name: 'search',
@@ -22,7 +22,13 @@ export class CatsController {
 
   @Get(':id')
   findOne(@Param('id') id: number): string {
-    return this.catsService.findOne(id);
+    const record = this.catsService.findOne(id)
+
+    if (!record) {
+      throw new HttpException('Кот не найден', HttpStatus.NOT_FOUND)
+    }
+
+    return record;
   }
 
   @Post()
