@@ -1,21 +1,19 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { CreateDogDto } from './dogs.dto.js';
-
-const dogs = [
-    { name: "rex", age: 3 }
-]
-
+import { DogsService } from './dogs.service.js';
+import { type Dog } from './dogs.interface.js';
 
 @Controller('dogs')
 export class DogsController {
+    constructor(private readonly dogsService: DogsService) { }
+
     @Get()
-    findMany() {
-        return dogs
+    findMany(): Dog[] {
+        return this.dogsService.findAll()
     }
 
     @Post()
-    create(@Body() createDogDto: CreateDogDto) {
-        dogs.push(createDogDto)
-        return dogs.at(-1)
+    create(@Body() createDogDto: CreateDogDto): Dog {
+        return this.dogsService.create(createDogDto.name, createDogDto.age)
     }
 }

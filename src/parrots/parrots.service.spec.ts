@@ -15,4 +15,6 @@ describe('ParrotsService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  // TODO: КТ
 });
