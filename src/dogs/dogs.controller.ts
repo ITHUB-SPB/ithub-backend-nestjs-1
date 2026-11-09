@@ -5,15 +5,15 @@ import { type Dog } from './dogs.interface.js';
 
 @Controller('dogs')
 export class DogsController {
-    constructor(private readonly dogsService: DogsService) { }
+  constructor(private readonly dogsService: DogsService) {}
 
-    @Get()
-    findMany(): Dog[] {
-        return this.dogsService.findAll()
-    }
+  @Get()
+  findMany(): Dog[] {
+    return this.dogsService.findAll();
+  }
 
-    @Post()
-    create(@Body() createDogDto: CreateDogDto): Dog {
-        return this.dogsService.create(createDogDto.name, createDogDto.age)
-    }
+  @Post()
+  create(@Body() createDogDto: CreateDogDto): Dog {
+    return this.dogsService.create(createDogDto.name, createDogDto.age);
+  }
 }

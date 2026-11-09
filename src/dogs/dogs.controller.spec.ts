@@ -10,7 +10,7 @@ describe('DogsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [DogsController],
-      providers: [DogsService]
+      providers: [DogsService],
     }).compile();
 
     controller = module.get<DogsController>(DogsController);
@@ -22,20 +22,20 @@ describe('DogsController', () => {
   });
 
   it('возвращает массив собак', () => {
-    const dogs = [{ name: "alf", age: 10 }]
+    const dogs = [{ name: 'alf', age: 10 }];
 
-    vi.spyOn(service, 'findAll').mockImplementation(() => dogs)
-    expect(controller.findMany()).toBe(dogs)
-  })
+    vi.spyOn(service, 'findAll').mockImplementation(() => dogs);
+    expect(controller.findMany()).toBe(dogs);
+  });
 
   it('добавляет и возвращает новую собаку', () => {
-    const newDog = { name: "alf", age: 10 }
+    const newDog = { name: 'alf', age: 10 };
 
-    vi.spyOn(service, 'create').mockImplementation(() => newDog)
+    vi.spyOn(service, 'create').mockImplementation(() => newDog);
 
-    expect(controller.create(newDog)).toBe(newDog)
-    expect(service.create).toHaveBeenCalled()
-    expect(service.create).toHaveBeenCalledWith('alf', 10)
-    expect(service.create).toHaveReturnedWith(newDog)
-  })
+    expect(controller.create(newDog)).toBe(newDog);
+    expect(service.create).toHaveBeenCalled();
+    expect(service.create).toHaveBeenCalledWith('alf', 10);
+    expect(service.create).toHaveReturnedWith(newDog);
+  });
 });

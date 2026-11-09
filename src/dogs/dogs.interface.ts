@@ -1,4 +1,4 @@
 export interface Dog {
-    name: string;
-    age: number;
+  name: string;
+  age: number;
 }

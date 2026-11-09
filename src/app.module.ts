@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, type NestModule } from '@nestjs/common';
 import { createObserveModule } from '@nestjs/observe';
 import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
 import { CatsModule } from './cats/cats.module.js';
 import { DogsModule } from './dogs/dogs.module.js';
 import { ParrotsModule } from './parrots/parrots.module.js';
+import { LoggerMiddleware } from './common/middleware/logger.middleware.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -20,9 +20,13 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     }),
     CatsModule,
     DogsModule,
-    ParrotsModule
+    ParrotsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).exclude('health').forRoutes('*splat');
+  }
+}
