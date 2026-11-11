@@ -1,6 +1,7 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, ParseIntPipe, Post, Query, UseFilters } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import * as z from 'zod';
+import { ZodExceptionFilter } from '../common/filters/zod-exception.filter.js';
 import { CatsService } from './cats.service.js';
 
 const createCatSchema = z.object({
@@ -21,7 +22,7 @@ export class CatsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number): string {
+  findOne(@Param('id', ParseIntPipe) id: number): string {
     const record = this.catsService.findOne(id)
 
     if (!record) {
@@ -32,10 +33,12 @@ export class CatsController {
   }
 
   @Post()
+  @UseFilters(ZodExceptionFilter)
   create(
     @Body({ schema: createCatSchema })
     createDto: z.infer<typeof createCatSchema>,
   ): string {
+    z.parse(createCatSchema, createDto)
     return this.catsService.create(createDto.name);
   }
 }
