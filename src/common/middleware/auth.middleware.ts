@@ -6,11 +6,14 @@ import {
 import type { Request, Response, NextFunction } from 'express';
 
 @Injectable()
-export class AuthMiddleware implements NestMiddleware {
+export class AuthMiddleware implements NestMiddleware {    
     use(request: Request, _response: Response, next: NextFunction) {
-        if (!request.headers.authorization) {
+        const header = request.headers.authorization
+        
+        if (!header || !header.match(/^Bearer\s+(.+)$/i)) {
             throw new UnauthorizedException();
         }
+
         next();
     }
 }

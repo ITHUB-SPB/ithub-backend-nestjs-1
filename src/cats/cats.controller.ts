@@ -1,9 +1,10 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, ParseIntPipe, Post, Query, UseFilters } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, DefaultValuePipe, ParseIntPipe, Post, Query, UseFilters, UseGuards } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import * as z from 'zod';
 import { ZodExceptionFilter } from '../common/filters/zod-exception.filter.js';
 import { CatsService } from './cats.service.js';
 import { ZodPipe } from '../common/pipes/zod.pipe.js';
+import { AuthGuard } from '../common/guards/auth.guard.js';
 
 const createCatSchema = z.object({
   name: z.string().nonempty(),
@@ -16,12 +17,14 @@ export class CatsController {
   @ApiQuery({
     name: 'search',
     required: false,
+    default: null
   })
   @Get()
-  findAll(@Query('search') search?: string): string[] {
-    return this.catsService.findAll(search ?? null);
+  findAll(@Query('search', new DefaultValuePipe(null)) search: string): string[] {
+    return this.catsService.findAll(search);
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): string {
     const record = this.catsService.findOne(id)
