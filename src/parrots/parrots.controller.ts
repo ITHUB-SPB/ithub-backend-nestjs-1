@@ -10,13 +10,14 @@ import {
 import { ParrotsService } from './parrots.service.js';
 import { CreateParrotDto } from './dto/create-parrot.dto.js';
 import { UpdateParrotDto } from './dto/update-parrot.dto.js';
+import { ClassValidatorPipe } from '../common/pipes/class-validator.pipe.js';
 
 @Controller('parrots')
 export class ParrotsController {
   constructor(private readonly parrotsService: ParrotsService) {}
 
   @Post()
-  create(@Body() createParrotDto: CreateParrotDto) {
+  create(@Body(ClassValidatorPipe) createParrotDto: CreateParrotDto) {
     return this.parrotsService.create(createParrotDto);
   }
 
