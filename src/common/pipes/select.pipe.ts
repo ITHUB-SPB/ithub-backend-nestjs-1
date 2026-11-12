@@ -5,8 +5,8 @@ export type SelectValue<TValue> = {
     value: TValue;
 }
 
-class SelectPipe implements PipeTransform {
-    transform(value: SelectValue<string | number>, metadata: ArgumentMetadata) {
+class SelectPipe<TInitial, TResult> implements PipeTransform<TInitial, TResult> {
+    transform(value: TInitial, metadata: ArgumentMetadata): TResult {
         if (
             !(typeof value === 'object')
             || value === null
@@ -29,13 +29,13 @@ class SelectPipe implements PipeTransform {
         return {
             id: Number(value.id),
             value: value.value
-        }
+        } as TResult
     }
 }
 
 @Injectable()
-export class NumericSelectPipe extends SelectPipe {
-    transform(value: SelectValue<number>, metadata: ArgumentMetadata) {
+export class NumericSelectPipe extends SelectPipe<SelectValue<string | number>, SelectValue<number>> {
+    transform(value: SelectValue<string | number>, metadata: ArgumentMetadata): SelectValue<number> {
         const valueAfterParentPipe = super.transform(value, metadata)
 
         if (typeof valueAfterParentPipe.value === 'string' && Number.isNaN(Number(valueAfterParentPipe.value))) {
@@ -52,8 +52,8 @@ export class NumericSelectPipe extends SelectPipe {
 }
 
 @Injectable()
-export class StringSelectPipe extends SelectPipe {
-    transform(value: SelectValue<string>, metadata: ArgumentMetadata) {
+export class StringSelectPipe extends SelectPipe<SelectValue<string | number>, SelectValue<string>> {
+    transform(value: SelectValue<string | number>, metadata: ArgumentMetadata): SelectValue<string> {
         const valueAfterParentPipe = super.transform(value, metadata)
 
         if (typeof valueAfterParentPipe.value !== 'string') {
@@ -62,6 +62,6 @@ export class StringSelectPipe extends SelectPipe {
             )
         }
 
-        return value
+        return valueAfterParentPipe
     }
 }
