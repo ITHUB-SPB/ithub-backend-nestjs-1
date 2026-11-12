@@ -9,9 +9,13 @@ export class DogsService {
     this.dogs = [{ id: 1, name: 'rex', age: 3 }];
   }
 
+  // дописать реализацию, обрабатывать строку поиска (1 балл)
   findAll(): Dog[] {
     return this.dogs;
   }
+
+  // дописать реализацию в соответствии с контроллером (1 балл)
+  findOne() { }
 
   create(name: string, age: number): Dog {
     const lastId = Math.max(...this.dogs.map(({ id }) => id))

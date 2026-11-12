@@ -17,12 +17,18 @@ describe('ParrotsService', () => {
   });
 
   it('сервис возвращает массив собак', () => {
-    const dogs = [{ name: 'rex', age: 3 }];
+    const dogs = [{ id: 1, name: 'rex', age: 3 }];
     expect(service.findAll()).toStrictEqual(dogs);
   });
 
   it('сервис реализует добавление собаки', () => {
-    const newDog = { name: 'alf', age: 10 };
+    const newDog = { id: 1, name: 'alf', age: 10 };
     expect(service.create('alf', 10)).toStrictEqual(newDog);
   });
+
+  // дописать автотест (1 балл)
+  it('сервис реализует выдачу собаки по id', () => { });
+
+  // дописать автотест (1 балл)
+  it('сервис реализует обновление собаки', () => { });
 });

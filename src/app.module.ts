@@ -1,7 +1,6 @@
 import { MiddlewareConsumer, Module, type NestModule } from '@nestjs/common';
 import { createObserveModule } from '@nestjs/observe';
 import { AppController } from './app.controller.js';
-import { CatsModule } from './cats/cats.module.js';
 import { DogsModule } from './dogs/dogs.module.js';
 import { ParrotsModule } from './parrots/parrots.module.js';
 import { LoggerMiddleware } from './common/middleware/logger.middleware.js';
@@ -18,7 +17,6 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       appSecret: process.env.OBSERVE_APP_SECRET ?? 'YOUR_APP_SECRET',
       serviceId: 'nest-app',
     }),
-    CatsModule,
     DogsModule,
     ParrotsModule,
   ],
