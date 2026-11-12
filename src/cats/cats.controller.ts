@@ -3,6 +3,7 @@ import { ApiQuery } from '@nestjs/swagger';
 import * as z from 'zod';
 import { ZodExceptionFilter } from '../common/filters/zod-exception.filter.js';
 import { CatsService } from './cats.service.js';
+import { ZodPipe } from '../common/pipes/zod.pipe.js';
 
 const createCatSchema = z.object({
   name: z.string().nonempty(),
@@ -35,10 +36,9 @@ export class CatsController {
   @Post()
   @UseFilters(ZodExceptionFilter)
   create(
-    @Body({ schema: createCatSchema })
+    @Body({ schema: createCatSchema, pipes: [ZodPipe] },)
     createDto: z.infer<typeof createCatSchema>,
   ): string {
-    z.parse(createCatSchema, createDto)
     return this.catsService.create(createDto.name);
   }
 }

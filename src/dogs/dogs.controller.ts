@@ -1,8 +1,14 @@
-import { Controller, Get, Post, Body, Patch, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, HttpException, HttpStatus, StandardSchemaValidationPipe } from '@nestjs/common';
+import * as z from 'zod'
 import { CreateDogDto, UpdateDogDto } from './dogs.dto.js';
 import { DogsService } from './dogs.service.js';
 import { type Dog } from './dogs.interface.js';
 import { NumericSelectPipe } from '../common/pipes/select.pipe.js';
+
+const createDogSchema = z.object({
+  name: z.string().nonempty(),
+  age: z.coerce.number().int().min(0)
+})
 
 @Controller('dogs')
 export class DogsController {
@@ -14,7 +20,7 @@ export class DogsController {
   }
 
   @Post()
-  create(@Body() createDogDto: CreateDogDto): Dog {
+  create(@Body({ schema: createDogSchema, pipes: [StandardSchemaValidationPipe] }) createDogDto: CreateDogDto): Dog {
     return this.dogsService.create(createDogDto.name, createDogDto.age);
   }
 
