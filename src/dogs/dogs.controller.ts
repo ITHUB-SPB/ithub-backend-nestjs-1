@@ -41,7 +41,6 @@ export class DogsController {
 
   // задекорировать api-спецификацию (1 балл)
   // @ApiOperation, @ApiQuery, @ApiResponse
-  // @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): Dog {
     const record = this.dogsService.findOne(id)
