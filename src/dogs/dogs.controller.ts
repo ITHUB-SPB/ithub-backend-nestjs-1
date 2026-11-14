@@ -43,11 +43,11 @@ export class DogsController {
   // @ApiOperation, @ApiQuery, @ApiResponse
   // @UseGuards(AuthGuard)
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): string {
+  findOne(@Param('id', ParseIntPipe) id: number): Dog {
     const record = this.dogsService.findOne(id)
 
     if (!record) {
-      throw new HttpException('Кот не найден', HttpStatus.NOT_FOUND)
+      throw new HttpException('Пёс не найден', HttpStatus.NOT_FOUND)
     }
 
     return record;
@@ -65,17 +65,17 @@ export class DogsController {
 
   // задекорировать api-спецификацию (1 балл)
   // @ApiOperation, @ApiBody, @ApiResponse
-  @Patch()
-  update(
-    @Body({ schema: updateDogSchema, pipes: [ZodPipe] })
-    updateDogDto: z.infer<typeof updateDogSchema>,
-  ): Dog {
-    const updatedDog = this.dogsService.update(updateDogDto.id, updateDogDto.value);
+  // @Patch()
+  // update(
+  //   @Body({ schema: updateDogSchema, pipes: [ZodPipe] })
+  //   updateDogDto: z.infer<typeof updateDogSchema>,
+  // ): Dog {
+  //   const updatedDog = this.dogsService.update(updateDogDto.id, updateDogDto.value);
 
-    if (!updatedDog) {
-      throw new HttpException('Пёс не найден', HttpStatus.NOT_FOUND)
-    }
+  //   if (!updatedDog) {
+  //     throw new HttpException('Пёс не найден', HttpStatus.NOT_FOUND)
+  //   }
 
-    return updatedDog;
-  }
+  //   return updatedDog;
+  // }
 }

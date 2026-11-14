@@ -9,13 +9,18 @@ export class DogsService {
     this.dogs = [{ id: 1, name: 'rex', age: 3 }];
   }
 
-  // дописать реализацию, обрабатывать строку поиска (1 балл)
-  findAll(): Dog[] {
-    return this.dogs;
+  // дописать реализацию, обрабатывать строку поиска (1 балл) victory
+  findAll(search: string | null): Dog[] {
+    if (!search) {
+      return this.dogs;
+    }
+    return this.dogs.filter((dog) => dog.name.includes(search));
   }
 
-  // дописать реализацию в соответствии с контроллером (1 балл)
-  findOne() { }
+  // дописать реализацию в соответствии с контроллером (1 балл) 
+  findOne(id: number): Dog | null {
+    return this.dogs.find((dog) => dog.id == id) ?? null;
+  }
 
   create(name: string, age: number): Dog {
     const lastId = Math.max(...this.dogs.map(({ id }) => id))

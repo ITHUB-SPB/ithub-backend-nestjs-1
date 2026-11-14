@@ -25,7 +25,7 @@ describe('DogsController', () => {
     const dogs = [{ id: 1, name: 'alf', age: 10 }];
 
     vi.spyOn(service, 'findAll').mockImplementation(() => dogs);
-    expect(controller.findMany()).toBe(dogs);
+    expect(controller.findAll('')).toBe(dogs);
   });
 
   it('добавляет и возвращает новую собаку', () => {
