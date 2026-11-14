@@ -1,5 +1,6 @@
+
 import { Controller, Get, Post, Body, Patch, HttpException, Param, DefaultValuePipe, ParseIntPipe, Query, UseFilters, UseGuards, HttpStatus, StandardSchemaValidationPipe } from '@nestjs/common';
-import { ApiQuery } from '@nestjs/swagger';
+import { ApiQuery, ApiOkResponse, ApiNotFoundResponse, ApiBadRequestResponse, ApiBody } from '@nestjs/swagger';
 import * as z from 'zod'
 import { ApiCreatedResponse, ApiConflictResponse, ApiUnprocessableEntityResponse, ApiOperation } from '@nestjs/swagger'
 import { CreateDogDto, UpdateDogDto } from './dogs.dto.js';
@@ -23,31 +24,42 @@ const dogSchema = z.object({
   age: z.coerce.number().int().min(0)
 })
 
+const updateDogSchema = z.object({
+  id: z.number().int().min(1),
+  value: z.number().int().min(0)
+})
+
 @Controller('dogs')
 export class DogsController {
   constructor(private readonly dogsService: DogsService) { }
 
   // задекорировать api-спецификацию (1 балл)
   // @ApiOperation, @ApiResponse
+  @ApiOperation({ summary: 'Получить список собак' })
+  @ApiOkResponse({ description: 'Список собак' })
   @ApiQuery({
     name: 'search',
     required: false,
     default: null
   })
   @Get()
-  findAll(@Query('search', new DefaultValuePipe(null)) search: string): Dog[] {
+  findAll(@Query('search', new DefaultValuePipe(null)) search: string | null): Dog[] {
     return this.dogsService.findAll(search);
   }
 
   // задекорировать api-спецификацию (1 балл)
   // @ApiOperation, @ApiQuery, @ApiResponse
   // @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Получить собаку по ID' })
+  @ApiOkResponse({ description: 'Информация о собаке' })
+  @ApiNotFoundResponse({ description: 'Собака не найдена' })
+  @ApiBadRequestResponse({ description: 'Некорректный ID' })
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): string {
+  findOne(@Param('id', ParseIntPipe) id: number): Dog {
     const record = this.dogsService.findOne(id)
 
     if (!record) {
-      throw new HttpException('Кот не найден', HttpStatus.NOT_FOUND)
+      throw new HttpException('Собака не найдена', HttpStatus.NOT_FOUND)
     }
 
     return record;
@@ -65,6 +77,21 @@ export class DogsController {
 
   // задекорировать api-спецификацию (1 балл)
   // @ApiOperation, @ApiBody, @ApiResponse
+  @ApiOperation({ summary: 'Обновить возраст собаки' })
+  @ApiOkResponse({ description: 'Собака обновлена' })
+  @ApiNotFoundResponse({ description: 'Собака не найдена' })
+  @ApiUnprocessableEntityResponse({ description: 'Некорректные данные' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        id: { type: 'integer', example: 1 },
+        value: { type: 'integer', example: 5 }
+      },
+      required: ['id', 'value']
+    }
+  })
+  @UseFilters(ZodExceptionFilter)
   @Patch()
   update(
     @Body({ schema: updateDogSchema, pipes: [ZodPipe] })

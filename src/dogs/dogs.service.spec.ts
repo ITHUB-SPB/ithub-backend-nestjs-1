@@ -22,13 +22,31 @@ describe('ParrotsService', () => {
   });
 
   it('сервис реализует добавление собаки', () => {
-    const newDog = { id: 1, name: 'alf', age: 10 };
+    const newDog = { id: 2, name: 'alf', age: 10 };
     expect(service.create('alf', 10)).toStrictEqual(newDog);
   });
 
-  // дописать автотест (1 балл)
-  it('сервис реализует выдачу собаки по id', () => { });
+// дописать автотест (1 балл)
+it('сервис реализует выдачу собаки по id', () => {
+  expect(service.findOne(1)).toStrictEqual({
+    id: 1,
+    name: 'rex',
+    age: 3
+  });
 
-  // дописать автотест (1 балл)
-  it('сервис реализует обновление собаки', () => { });
+  expect(service.findOne(999)).toBeNull();
+});
+
+// дописать автотест (1 балл)
+it('сервис реализует обновление собаки', () => {
+  const updatedDog = service.update(1, 5);
+
+  expect(updatedDog).toStrictEqual({
+    id: 1,
+    name: 'rex',
+    age: 5
+  });
+
+  expect(service.update(999, 5)).toBeNull();
+});
 });

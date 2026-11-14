@@ -18,15 +18,51 @@ describe('ParrotsController', () => {
     expect(controller).toBeDefined();
   });
 
-  // дописать автотест (1 балл)
-  it('реализовано создание попугая', () => { });
+  it('реализовано создание попугая', () => {
+    const parrot = controller.create({
+      name: 'Kesha',
+      breed: 'Macaw',
+    });
 
-  // дописать автотест (1 балл)
-  it('реализовано получение списка попугаев', () => { });
+    expect(parrot).toEqual({
+      id: 1,
+      name: 'Kesha',
+      breed: 'Macaw',
+    });
+  });
 
-  // дописать автотест (1 балл)
-  it('реализовано получение попугая по id', () => { });
+  it('реализовано получение списка попугаев', () => {
+    const parrot = controller.create({
+      name: 'Kesha',
+      breed: 'Macaw',
+    });
 
-  // дописать автотест (1 балл)
-  it('реализовано обновление попугая', () => { });
+    expect(controller.findAll()).toEqual([parrot]);
+  });
+
+  it('реализовано получение попугая по id', () => {
+    const parrot = controller.create({
+      name: 'Kesha',
+      breed: 'Macaw',
+    });
+
+    expect(controller.findOne(parrot.id)).toEqual(parrot);
+  });
+
+  it('реализовано обновление попугая', () => {
+    const parrot = controller.create({
+      name: 'Kesha',
+      breed: 'Macaw',
+    });
+
+    const updated = controller.update(parrot.id, {
+      name: 'Gosha',
+    });
+
+    expect(updated).toEqual({
+      id: 1,
+      name: 'Gosha',
+      breed: 'Macaw',
+    });
+  });
 });
