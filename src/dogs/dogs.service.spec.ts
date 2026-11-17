@@ -18,7 +18,7 @@ describe('ParrotsService', () => {
 
   it('сервис возвращает массив собак', () => {
     const dogs = [{ id: 1, name: 'rex', age: 3 }];
-    expect(service.findAll()).toStrictEqual(dogs);
+    expect(service.findAll(null)).toStrictEqual(dogs);
   });
 
   it('сервис реализует добавление собаки', () => {
@@ -27,8 +27,17 @@ describe('ParrotsService', () => {
   });
 
   // дописать автотест (1 балл)
-  it('сервис реализует выдачу собаки по id', () => { });
+  it('сервис реализует выдачу собаки по id', () => {
+    const dog = { id: 1, name: 'rex', age: 3 };
+    const id = 1;
+    const result = service.findOne(id);
+    expect(result).toStrictEqual(dog);
+  });
 
   // дописать автотест (1 балл)
-  it('сервис реализует обновление собаки', () => { });
+  it('сервис реализует обновление собаки', () => {
+    const dog = { id: 1, name: 'rex', age: 4 };
+    const result = service.update(1, 4);
+    expect(result).toStrictEqual(dog);
+  });
 });
