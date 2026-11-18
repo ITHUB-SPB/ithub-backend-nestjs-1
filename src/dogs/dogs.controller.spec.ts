@@ -1,3 +1,4 @@
+
 import { vi } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DogsController } from './dogs.controller.js';
@@ -24,21 +25,26 @@ describe('DogsController', () => {
   it('возвращает массив собак', () => {
     const dogs = [{ id: 1, name: 'alf', age: 10 }];
 
-    vi.spyOn(service, 'findAll').mockImplementation(() => dogs);
-    expect(controller.findMany()).toBe(dogs);
+    vi.spyOn(service, 'findAll').mockReturnValue(dogs);
+
+    expect(controller.findAll(null)).toBe(dogs);
   });
 
   it('добавляет и возвращает новую собаку', () => {
     const newDog = { id: 1, name: 'alf', age: 10 };
 
-    vi.spyOn(service, 'create').mockImplementation(() => newDog);
+    vi.spyOn(service, 'create').mockReturnValue(newDog);
 
     expect(controller.create(newDog)).toBe(newDog);
-    expect(service.create).toHaveBeenCalled();
     expect(service.create).toHaveBeenCalledWith('alf', 10);
-    expect(service.create).toHaveReturnedWith(newDog);
   });
-
   // дописать автотест (1 балл)
-  it('обновляет и возвращает обновленную собаку', () => { })
+  it('обновляет и возвращает обновленную собаку', () => {
+    const updatedDog = { id: 1, name: 'rex', age: 5 };
+
+    vi.spyOn(service, 'update').mockReturnValue(updatedDog);
+
+    expect(controller.update({ id: 1, value: 5 })).toBe(updatedDog);
+    expect(service.update).toHaveBeenCalledWith(1, 5);
+  });
 });

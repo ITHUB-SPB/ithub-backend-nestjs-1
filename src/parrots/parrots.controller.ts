@@ -1,3 +1,4 @@
+
 import {
   Controller,
   Get,
@@ -5,47 +6,111 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
+  ParseIntPipe,
+  NotFoundException,
+  UseFilters,
 } from '@nestjs/common';
+
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiBody,
+  ApiParam,
+} from '@nestjs/swagger';
+
 import { ParrotsService } from './parrots.service.js';
 import { CreateParrotDto } from './dto/create-parrot.dto.js';
 import { UpdateParrotDto } from './dto/update-parrot.dto.js';
+import { Parrot } from './entities/parrot.entity.js';
+
 import { ClassValidatorPipe } from '../common/pipes/class-validator.pipe.js';
 
 @Controller('parrots')
 export class ParrotsController {
-  constructor(private readonly parrotsService: ParrotsService) { }
+  constructor(private readonly parrotsService: ParrotsService) {}
 
-  // задекорировать api-спецификацию, дописать возвращаемый тип (1 балл);
-  // 
-  // реализовать фильтр для обработки исключений, выбрасываемых пайпом 
-  // `class-validator.pipe.ts`, по аналогии с фильтром `zod-exception.filter.ts`, 
-  // для стандартизации формата ответов в случае ошибок валидации (1 балл);
-
+  @ApiOperation({ summary: 'Создать попугая' })
+  @ApiBody({ type: CreateParrotDto })
+  @ApiCreatedResponse({
+    description: 'Попугай успешно создан',
+    type: Parrot,
+  })
   @Post()
-  create(@Body(ClassValidatorPipe) createParrotDto: CreateParrotDto) {
+  create(
+    @Body(ClassValidatorPipe) createParrotDto: CreateParrotDto,
+  ): Parrot {
     return this.parrotsService.create(createParrotDto);
   }
 
-  // задекорировать api-спецификацию, дописать возвращаемый тип  (1 балл)
+  @ApiOperation({ summary: 'Получить список попугаев' })
+  @ApiResponse({
+    status: 200,
+    description: 'Список попугаев',
+    type: [Parrot],
+  })
   @Get()
-  findAll() {
+  findAll(): Parrot[] {
     return this.parrotsService.findAll();
   }
 
-  // задекорировать api-спецификацию (1 балл)
-  // валидировать id, добавить возвращаемый тип (1 балл)
-  // в случае отсутствия записи выбрасывать верное исключение (1 балл)
+  @ApiOperation({ summary: 'Получить попугая по ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID попугая',
+    example: 1,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Попугай найден',
+    type: Parrot,
+  })
+  @ApiNotFoundResponse({
+    description: 'Попугай не найден',
+  })
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.parrotsService.findOne(+id);
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Parrot {
+    const parrot = this.parrotsService.findOne(id);
+
+    if (!parrot) {
+      throw new NotFoundException('Попугай не найден');
+    }
+
+    return parrot;
   }
 
-  // задекорировать api-спецификацию (1 балл)
-  // валидировать id и тело запроса, добавить возвращаемый тип (1 балл)
-  // в случае отсутствия записи выбрасывать верное исключение (1 балл)
+  @ApiOperation({ summary: 'Обновить попугая' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID попугая',
+    example: 1,
+  })
+  @ApiBody({ type: UpdateParrotDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Попугай обновлен',
+    type: Parrot,
+  })
+  @ApiNotFoundResponse({
+    description: 'Попугай не найден',
+  })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateParrotDto: UpdateParrotDto) {
-    return this.parrotsService.update(+id, updateParrotDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(ClassValidatorPipe) updateParrotDto: UpdateParrotDto,
+  ): Parrot {
+    const parrot = this.parrotsService.update(
+      id,
+      updateParrotDto,
+    );
+
+    if (!parrot) {
+      throw new NotFoundException('Попугай не найден');
+    }
+
+    return parrot;
   }
 }

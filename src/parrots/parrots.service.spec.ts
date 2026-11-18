@@ -16,15 +16,35 @@ describe('ParrotsService', () => {
     expect(service).toBeDefined();
   });
 
-  // дописать автотест (1 балл)
-  it('сервис реализует создание попугая', () => { });
+  it('сервис реализует создание попугая', () => {
+    const newParrot = { id: 2, name: 'kesha', breed: 'blue' };
 
-  // дописать автотест (1 балл)
-  it('сервис реализует получение списка попугаев', () => { });
+    expect(service.create({ name: 'kesha', breed: 'blue' })).toStrictEqual(
+      newParrot,
+    );
+  });
 
-  // дописать автотест (1 балл)
-  it('сервис реализует получение попугая по id', () => { });
+  it('сервис реализует получение списка попугаев', () => {
+    const parrots = [{ id: 1, name: 'kesha', breed: 'blue' }];
 
-  // дописать автотест (1 балл)
-  it('сервис реализует обновление попугая', () => { });
+    expect(service.findAll()).toStrictEqual(parrots);
+  });
+
+  it('сервис реализует получение попугая по id', () => {
+    const parrot = { id: 1, name: 'kesha', breed: 'blue' };
+
+    expect(service.findOne(1)).toStrictEqual(parrot);
+    expect(service.findOne(100)).toBeNull();
+  });
+
+  it('сервис реализует обновление попугая', () => {
+    const updatedParrot = service.update(1, {
+      name: 'boba',
+      breed: 'red',
+    });
+
+    expect(updatedParrot?.name).toBe('boba');
+    expect(updatedParrot?.breed).toBe('red');
+    expect(service.update(100, { name: 'boba' })).toBeNull();
+  });
 });
