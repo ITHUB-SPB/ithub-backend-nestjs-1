@@ -40,5 +40,14 @@ describe('DogsController', () => {
   });
 
   // дописать автотест (1 балл)
-  it('обновляет и возвращает обновленную собаку', () => { })
+  it('обновляет и возвращает обновленную собаку', () => {
+    const dog = { id: 1, name: 'rex', age: 4 };
+    const dto = { id: 1, value: 4 };
+
+    vi.spyOn(service, 'update').mockImplementation(() => dog);
+
+    expect(controller.update(dto)).toBe(dog);
+    expect(service.update).toHaveBeenCalledWith(1, 4);
+    expect(service.update).toHaveReturnedWith(dog);
+  });
 });

@@ -15,13 +15,16 @@ import {
   HttpStatus,
   StandardSchemaValidationPipe,
 } from '@nestjs/common';
-import { ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import * as z from 'zod';
 import {
   ApiCreatedResponse,
   ApiConflictResponse,
   ApiUnprocessableEntityResponse,
   ApiOperation,
+  ApiBody,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
 } from '@nestjs/swagger';
 import { CreateDogDto, UpdateDogDto } from './dogs.dto.js';
 import { DogsService } from './dogs.service.js';
@@ -46,6 +49,9 @@ const dogSchema = z.object({
 @ApiBearerAuth()
 @Controller('dogs')
 export class DogsController {
+  findMany(): any {
+    throw new Error('Method not implemented.');
+  }
   constructor(private readonly dogsService: DogsService) {}
 
   // задекорировать api-спецификацию (1 балл)
