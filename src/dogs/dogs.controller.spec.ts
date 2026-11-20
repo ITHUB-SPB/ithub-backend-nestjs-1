@@ -39,6 +39,16 @@ describe('DogsController', () => {
     expect(service.create).toHaveReturnedWith(newDog);
   });
 
-  // дописать автотест (1 балл)
-  it('обновляет и возвращает обновленную собаку', () => { })
+  // дописать автотест (1 балл) victory
+it('обновляет и возвращает обновленную собаку', () => {
+  const created = service.create('Рекс', 3);
+
+  const updated = service.update(created.id, 5);
+
+  expect(updated).toEqual({
+    id: created.id,
+    name: 'Рекс',
+    age: 5,
+  });
+});
 });

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, HttpException, Param, DefaultValuePipe, ParseIntPipe, Query, UseFilters, UseGuards, HttpStatus, StandardSchemaValidationPipe } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import * as z from 'zod'
-import { ApiCreatedResponse, ApiConflictResponse, ApiUnprocessableEntityResponse, ApiOperation } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiConflictResponse, ApiUnprocessableEntityResponse, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger'
 import { CreateDogDto, UpdateDogDto } from './dogs.dto.js';
 import { DogsService } from './dogs.service.js';
 import { type Dog } from './dogs.interface.js';
@@ -11,6 +11,10 @@ import { ZodExceptionFilter } from '../common/filters/zod-exception.filter.js';
 import { ZodPipe } from '../common/pipes/zod.pipe.js';
 import { AuthGuard } from '../common/guards/auth.guard.js';
 
+const UpdateDogSchema  = z.object({
+  id: z.number(),
+  value: z.number(),
+});
 
 const createDogSchema = z.object({
   name: z.string().nonempty(),
@@ -27,7 +31,7 @@ const dogSchema = z.object({
 export class DogsController {
   constructor(private readonly dogsService: DogsService) { }
 
-  // задекорировать api-спецификацию (1 балл)
+  // задекорировать api-спецификацию (1 балл) victory
   // @ApiOperation, @ApiResponse
   @ApiQuery({
     name: 'search',
@@ -35,14 +39,31 @@ export class DogsController {
     default: null
   })
   @Get()
+  @ApiOperation({
+    summary: 'Получить список все собак.',
+    description: 'Возвращает всех собак из системы.',
+  })
+  @ApiResponse({ status: 200, description: 'Список собак.',  })
+  @ApiResponse({ status: 400, description: 'неверный синтаксис или некорректные данные в запросе.' })
   findAll(@Query('search', new DefaultValuePipe(null)) search: string): Dog[] {
     return this.dogsService.findAll(search);
   }
 
-  // задекорировать api-спецификацию (1 балл)
+  // задекорировать api-спецификацию (1 балл) victory
   // @ApiOperation, @ApiQuery, @ApiResponse
+  @ApiQuery({
+    name: 'id',
+    required: true,
+    default: null
+  })
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Dog {
+  @ApiOperation({
+    summary: 'Получить информацию по одной конкретной собаке.',
+    description: 'Возвращает информацию по одной конкретной собаке из системы.',
+  })
+  @ApiResponse({ status: 200, description: 'Информация про собаку.',  })
+  @ApiResponse({ status: 404, description: 'Пёс не найден.' })
+  findOne(@Query('id', ParseIntPipe) id: number): Dog {
     const record = this.dogsService.findOne(id)
 
     if (!record) {
@@ -62,19 +83,29 @@ export class DogsController {
     return this.dogsService.create(createDogDto.name, createDogDto.age);
   }
 
-  // задекорировать api-спецификацию (1 балл)
+  // задекорировать api-спецификацию (1 балл) victory
   // @ApiOperation, @ApiBody, @ApiResponse
-  // @Patch()
-  // update(
-  //   @Body({ schema: updateDogSchema, pipes: [ZodPipe] })
-  //   updateDogDto: z.infer<typeof updateDogSchema>,
-  // ): Dog {
-  //   const updatedDog = this.dogsService.update(updateDogDto.id, updateDogDto.value);
+  @Patch()
+  @ApiBody({
+  type: UpdateDogDto,
+  description: 'Данные для изменения информации о собаке',
+  })
+  @ApiOperation({
+    summary: 'Изменить информацию по одной конкретной собаке.',
+    description: 'Изменяет информацию по одной конкретной собаке из системы.',
+  })
+  @ApiResponse({ status: 200, description: 'изменение выполнены.',  })
+  @ApiResponse({ status: 404, description: 'Пёс не найден.' })
+  update(
+    @Body({ schema: UpdateDogSchema, pipes: [StandardSchemaValidationPipe] })
+    updateDogDto: UpdateDogDto,
+  ): Dog {
+    const updatedDog = this.dogsService.update(updateDogDto.id, updateDogDto.value);
 
-  //   if (!updatedDog) {
-  //     throw new HttpException('Пёс не найден', HttpStatus.NOT_FOUND)
-  //   }
+    if (!updatedDog) {
+      throw new HttpException('Пёс не найден', HttpStatus.NOT_FOUND)
+    }
 
-  //   return updatedDog;
-  // }
+    return updatedDog;
+  }
 }

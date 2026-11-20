@@ -6,11 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  DefaultValuePipe,
+  Query,
 } from '@nestjs/common';
+import { ApiQuery } from '@nestjs/swagger';
 import { ParrotsService } from './parrots.service.js';
 import { CreateParrotDto } from './dto/create-parrot.dto.js';
 import { UpdateParrotDto } from './dto/update-parrot.dto.js';
 import { ClassValidatorPipe } from '../common/pipes/class-validator.pipe.js';
+import { Parrot } from './parrots.interface.js';
 
 @Controller('parrots')
 export class ParrotsController {
@@ -26,11 +30,16 @@ export class ParrotsController {
   create(@Body(ClassValidatorPipe) createParrotDto: CreateParrotDto) {
     return this.parrotsService.create(createParrotDto);
   }
-
+  
   // задекорировать api-спецификацию, дописать возвращаемый тип  (1 балл)
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    default: null
+  })
   @Get()
-  findAll() {
-    return this.parrotsService.findAll();
+  findAll(@Query('search', new DefaultValuePipe(null)) search: string): Parrot[] {
+    return this.parrotsService.findAll(search);
   }
 
   // задекорировать api-спецификацию (1 балл)

@@ -17,7 +17,7 @@ export class DogsService {
     return this.dogs.filter((dog) => dog.name.includes(search));
   }
 
-  // дописать реализацию в соответствии с контроллером (1 балл) 
+  // дописать реализацию в соответствии с контроллером (1 балл) victory
   findOne(id: number): Dog | null {
     return this.dogs.find((dog) => dog.id == id) ?? null;
   }
