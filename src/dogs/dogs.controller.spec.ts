@@ -29,7 +29,7 @@ describe('DogsController', () => {
   });
 
   it('добавляет и возвращает новую собаку', () => {
-    const newDog = { id: 1, name: 'alf', age: 10 };
+    const newDog = { id: 2, name: 'alf', age: 10 };
 
     vi.spyOn(service, 'create').mockImplementation(() => newDog);
 
@@ -40,15 +40,12 @@ describe('DogsController', () => {
   });
 
   // дописать автотест (1 балл) victory
-it('обновляет и возвращает обновленную собаку', () => {
-  const created = service.create('Рекс', 3);
+  it('обновляет и возвращает обновлённую собаку', () => {
+    const updatedDog = { id: 1, name: 'Рекс', age: 5 };
 
-  const updated = service.update(created.id, 5);
+    vi.spyOn(service, 'update').mockReturnValue(updatedDog);
 
-  expect(updated).toEqual({
-    id: created.id,
-    name: 'Рекс',
-    age: 5,
+    expect(controller.update({ id: 1, value: 5 })).toEqual(updatedDog);
+    expect(service.update).toHaveBeenCalledWith(1, 5);
   });
-});
 });

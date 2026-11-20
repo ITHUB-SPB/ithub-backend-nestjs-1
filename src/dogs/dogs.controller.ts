@@ -21,12 +21,6 @@ const createDogSchema = z.object({
   age: z.coerce.number().int().min(0)
 })
 
-const dogSchema = z.object({
-  id: z.int().min(1),
-  name: z.string().nonempty(),
-  age: z.coerce.number().int().min(0)
-})
-
 @Controller('dogs')
 export class DogsController {
   constructor(private readonly dogsService: DogsService) { }
@@ -44,7 +38,6 @@ export class DogsController {
     description: 'Возвращает всех собак из системы.',
   })
   @ApiResponse({ status: 200, description: 'Список собак.',  })
-  @ApiResponse({ status: 400, description: 'неверный синтаксис или некорректные данные в запросе.' })
   findAll(@Query('search', new DefaultValuePipe(null)) search: string): Dog[] {
     return this.dogsService.findAll(search);
   }
@@ -97,7 +90,7 @@ export class DogsController {
   @ApiResponse({ status: 200, description: 'изменение выполнены.',  })
   @ApiResponse({ status: 404, description: 'Пёс не найден.' })
   update(
-    @Body({ schema: UpdateDogSchema, pipes: [StandardSchemaValidationPipe] })
+  @Body({ schema: UpdateDogSchema, pipes: [StandardSchemaValidationPipe] })
     updateDogDto: UpdateDogDto,
   ): Dog {
     const updatedDog = this.dogsService.update(updateDogDto.id, updateDogDto.value);
